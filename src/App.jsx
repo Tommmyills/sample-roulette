@@ -115,7 +115,7 @@ function VinylRecord({ spinning, record, loading }) {
         ))}
         <circle cx="140" cy="140" r="137" fill="url(#shine2)"/>
         <circle cx="140" cy="140" r="58" fill="none" stroke="#cc0000" strokeWidth="1.5" opacity="0.5"/>
-        <image href="/Logo.png" x="84" y="84" width="112" height="112" clipPath="url(#lclip)" preserveAspectRatio="xMidYMid slice"/>
+        <image href="/logo.png" x="84" y="84" width="112" height="112" clipPath="url(#lclip)" preserveAspectRatio="xMidYMid slice"/>
         <circle cx="140" cy="140" r="5" fill="#000" stroke="#1a1a1a" strokeWidth="0.5"/>
         <circle cx="140" cy="140" r="137" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="2"/>
         {record && !loading && (
@@ -275,7 +275,7 @@ export default function SampleRoulette() {
       <div style={{ position:"fixed", inset:0, pointerEvents:"none", zIndex:0 }}>
         <img src="/splatter.png" alt="" style={{
           width:"100%", height:"100%", objectFit:"cover",
-          opacity:0.75, mixBlendMode:"screen",
+          opacity:0.5, mixBlendMode:"normal",
         }}/>
         <BloodDrips />
       </div>
