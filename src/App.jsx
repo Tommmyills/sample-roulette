@@ -31,16 +31,16 @@ const MODES = [
 ];
 
 const SPLAT_DATA = [
-  { left:"2%",   top:"5%",   w:130, opacity:0.13, rot:15  },
-  { left:"80%",  top:"1%",   w:90,  opacity:0.10, rot:200 },
-  { left:"88%",  top:"45%",  w:150, opacity:0.12, rot:90  },
-  { left:"0%",   top:"68%",  w:100, opacity:0.09, rot:310 },
-  { left:"42%",  top:"82%",  w:70,  opacity:0.11, rot:45  },
-  { left:"58%",  top:"10%",  w:55,  opacity:0.08, rot:180 },
-  { left:"18%",  top:"38%",  w:40,  opacity:0.10, rot:270 },
-  { left:"91%",  top:"78%",  w:50,  opacity:0.09, rot:130 },
-  { left:"33%",  top:"55%",  w:30,  opacity:0.07, rot:20  },
-  { left:"70%",  top:"62%",  w:35,  opacity:0.08, rot:340 },
+  { left:"2%",   top:"5%",   w:180, opacity:0.55, rot:15  },
+  { left:"80%",  top:"1%",   w:140, opacity:0.50, rot:200 },
+  { left:"88%",  top:"45%",  w:200, opacity:0.60, rot:90  },
+  { left:"0%",   top:"68%",  w:160, opacity:0.55, rot:310 },
+  { left:"42%",  top:"82%",  w:120, opacity:0.45, rot:45  },
+  { left:"58%",  top:"10%",  w:100, opacity:0.40, rot:180 },
+  { left:"18%",  top:"38%",  w:90,  opacity:0.45, rot:270 },
+  { left:"91%",  top:"78%",  w:110, opacity:0.50, rot:130 },
+  { left:"33%",  top:"55%",  w:80,  opacity:0.40, rot:20  },
+  { left:"70%",  top:"62%",  w:90,  opacity:0.45, rot:340 },
 ];
 
 function Splat({ left, top, w, opacity, rot }) {
@@ -75,7 +75,7 @@ function BloodDrips() {
     <>
       {SPLAT_DATA.map((s,i) => <Splat key={i} {...s} />)}
       {drips.map((d,i) => (
-        <svg key={i} style={{ position:"absolute", top:0, left:d.left, width:4, opacity:0.12, pointerEvents:"none" }} viewBox={`0 0 4 ${d.h}`} height={d.h}>
+        <svg key={i} style={{ position:"absolute", top:0, left:d.left, width:6, opacity:0.55, pointerEvents:"none" }} viewBox={`0 0 4 ${d.h}`} height={d.h}>
           <path d={`M2 0 Q2.5 ${d.h*0.4} 2 ${d.h*0.75} Q1.5 ${d.h*0.9} 2 ${d.h}`} stroke="#cc0000" strokeWidth="3" fill="none" strokeLinecap="round"/>
           <circle cx="2" cy={d.h} r="4" fill="#cc0000"/>
         </svg>
@@ -115,7 +115,7 @@ function VinylRecord({ spinning, record, loading }) {
         ))}
         <circle cx="140" cy="140" r="137" fill="url(#shine2)"/>
         <circle cx="140" cy="140" r="58" fill="none" stroke="#cc0000" strokeWidth="1.5" opacity="0.5"/>
-        <image href="/logo.png" x="84" y="84" width="112" height="112" clipPath="url(#lclip)" preserveAspectRatio="xMidYMid slice"/>
+        <image href="/Logo.png" x="84" y="84" width="112" height="112" clipPath="url(#lclip)" preserveAspectRatio="xMidYMid slice"/>
         <circle cx="140" cy="140" r="5" fill="#000" stroke="#1a1a1a" strokeWidth="0.5"/>
         <circle cx="140" cy="140" r="137" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="2"/>
         {record && !loading && (
@@ -149,7 +149,7 @@ function Btn({ onClick, disabled, children, primary, style={} }) {
         borderRadius:8, cursor:disabled?"wait":"pointer",
         color: primary?"#fff" : p?"#ff3333":"rgba(255,255,255,0.65)",
         fontSize:10, letterSpacing:2, padding:"9px 14px",
-        fontFamily:"'Courier New',monospace", fontWeight:700,
+        fontFamily:"'CaptureIt','Courier New',monospace", fontWeight:700,
         boxShadow: p ? "0 0 14px rgba(204,0,0,0.5),inset 0 0 8px rgba(204,0,0,0.1)" : primary?"0 4px 16px rgba(204,0,0,0.35)":"none",
         transition:"all 0.12s", ...style,
       }}>{children}</button>
@@ -159,9 +159,9 @@ function Btn({ onClick, disabled, children, primary, style={} }) {
 function YearStep({ label, value, onChange }) {
   return (
     <div style={{ flex:1, display:"flex", flexDirection:"column", alignItems:"center" }}>
-      <div style={{ fontSize:8, color:"rgba(204,0,0,0.5)", letterSpacing:4, marginBottom:4, fontFamily:"'Courier New',monospace" }}>{label}</div>
+      <div style={{ fontSize:8, color:"rgba(204,0,0,0.5)", letterSpacing:4, marginBottom:4, fontFamily:"'CaptureIt','Courier New',monospace" }}>{label}</div>
       <Btn onClick={()=>onChange(value+1)} style={{ width:"100%", borderRadius:"8px 8px 0 0", borderBottom:"none", fontSize:14, padding:"6px 0" }}>▲</Btn>
-      <div style={{ width:"100%", padding:"11px 0", textAlign:"center", background:"rgba(0,0,0,0.6)", border:"1px solid rgba(204,0,0,0.2)", fontSize:22, fontWeight:900, color:"#fff", fontFamily:"'Courier New',monospace", letterSpacing:3 }}>{value}</div>
+      <div style={{ width:"100%", padding:"11px 0", textAlign:"center", background:"rgba(0,0,0,0.6)", border:"1px solid rgba(204,0,0,0.2)", fontSize:22, fontWeight:900, color:"#fff", fontFamily:"'CaptureIt','Courier New',monospace", letterSpacing:3 }}>{value}</div>
       <Btn onClick={()=>onChange(value-1)} style={{ width:"100%", borderRadius:"0 0 8px 8px", borderTop:"none", fontSize:14, padding:"6px 0" }}>▼</Btn>
     </div>
   );
@@ -258,8 +258,9 @@ export default function SampleRoulette() {
   };
 
   return (
-    <div style={{ minHeight:"100vh", background:"#060606", color:"#fff", fontFamily:"'Courier New',monospace", position:"relative", overflow:"hidden" }}>
+    <div style={{ minHeight:"100vh", background:"#060606", color:"#fff", fontFamily:"'CaptureIt','Courier New',monospace", position:"relative", overflow:"hidden" }}>
       <style>{`
+        @font-face{font-family:'CaptureIt';src:url('/Capture_it.ttf') format('truetype');font-weight:normal;font-style:normal}
         @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
         @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.25}}
         html,body,#root{background:#060606;margin:0;padding:0;min-height:100vh}
@@ -270,8 +271,12 @@ export default function SampleRoulette() {
         .hist:hover{background:rgba(204,0,0,0.07)!important;border-left-color:#cc0000!important}
       `}</style>
 
-      {/* Blood splatters background */}
+      {/* Real splatter background */}
       <div style={{ position:"fixed", inset:0, pointerEvents:"none", zIndex:0 }}>
+        <img src="/splatter.png" alt="" style={{
+          width:"100%", height:"100%", objectFit:"cover",
+          opacity:0.75, mixBlendMode:"screen",
+        }}/>
         <BloodDrips />
       </div>
 
@@ -280,7 +285,7 @@ export default function SampleRoulette() {
         {/* HEADER */}
         <div style={{ textAlign:"center", marginBottom:4 }}>
           <div style={{ fontSize:8, color:"rgba(204,0,0,0.4)", letterSpacing:8, marginBottom:8 }}>◆ EST. 2024 · DISCOGS · 15M+ RECORDS ◆</div>
-          <div style={{ fontSize:52, fontWeight:900, letterSpacing:10, color:"#fff", textTransform:"uppercase", textShadow:"0 0 50px rgba(204,0,0,0.25), 0 2px 0 #990000" }}>
+          <div style={{ fontSize:52, fontWeight:900, letterSpacing:10, color:"#cc0000", textTransform:"uppercase", textShadow:"0 0 60px rgba(204,0,0,0.8), 0 3px 0 #660000, 2px 2px 0 #000", fontFamily:"'CaptureIt','Courier New',monospace" }}>
             SAMPLE ROULETTE
           </div>
           <div style={{ fontSize:9, color:"rgba(255,255,255,0.12)", letterSpacing:6, marginTop:6 }}>RARE CUTS · ALL ERAS · WORLDWIDE</div>
@@ -309,7 +314,7 @@ export default function SampleRoulette() {
                       onMouseDown={()=>setP(true)} onMouseUp={()=>setP(false)} onMouseLeave={()=>setP(false)}
                       style={{
                         padding:"7px 3px", fontSize:8, letterSpacing:0.5,
-                        fontFamily:"'Courier New',monospace", fontWeight:700, cursor:"pointer",
+                        fontFamily:"'CaptureIt','Courier New',monospace", fontWeight:700, cursor:"pointer",
                         border:`1px solid ${modeKey===m.key||p?"#cc0000":"rgba(255,255,255,0.06)"}`,
                         borderRadius:6,
                         background:modeKey===m.key?"rgba(204,0,0,0.1)":"rgba(255,255,255,0.02)",
@@ -331,7 +336,7 @@ export default function SampleRoulette() {
                 <div style={{ fontSize:8, color:"rgba(204,0,0,0.45)", letterSpacing:3, marginBottom:6 }}>TYPE ANY GENRE — LOFI · BOSSA NOVA · ANYTHING</div>
                 <input type="text" value={customGenre} onChange={e=>setCustomGenre(e.target.value)}
                   placeholder="e.g. rare soul breaks, afrobeat..."
-                  style={{ width:"100%", background:"rgba(0,0,0,0.5)", border:"1px solid rgba(204,0,0,0.2)", borderRadius:8, color:"#fff", fontSize:12, fontFamily:"'Courier New',monospace", padding:"10px 12px" }}
+                  style={{ width:"100%", background:"rgba(0,0,0,0.5)", border:"1px solid rgba(204,0,0,0.2)", borderRadius:8, color:"#fff", fontSize:12, fontFamily:"'CaptureIt','Courier New',monospace", padding:"10px 12px" }}
                 />
               </div>
             )}
