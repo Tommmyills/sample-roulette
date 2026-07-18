@@ -34,13 +34,13 @@ const MODES = [
 // ─── Vinyl SVG ───────────────────────────────────────────────────────────────
 function VinylRecord({ spinning, color, record, loading }) {
   return (
-    <div style={{ position: "relative", width: 210, height: 210, margin: "0 auto", flexShrink: 0 }}>
+    <div style={{ position: "relative", width: 260, height: 260, margin: "0 auto", flexShrink: 0 }}>
       <style>{`
         @keyframes vinylSpin { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
         @keyframes vinylPulse { 0%,100%{opacity:1} 50%{opacity:0.6} }
         .vinyl { animation: ${spinning || loading ? "vinylSpin 1.8s linear infinite" : "none"}; width:210px; height:210px; }
       `}</style>
-      <svg className="vinyl" viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg">
+      <svg className="vinyl" viewBox="0 0 220 220" style={{width:"260px",height:"260px"}} xmlns="http://www.w3.org/2000/svg">
         <defs>
           <radialGradient id="vg" cx="40%" cy="35%" r="65%">
             <stop offset="0%"   stopColor="#3a3a3a"/>
@@ -168,7 +168,7 @@ export default function SampleRoulette() {
         // Custom: search by genre text
         const randomPage = Math.floor(Math.random() * 40) + 1;
         const q = encodeURIComponent(customGenre.trim());
-        searchUrl = `https://api.discogs.com/database/search?q=${q}&format=Vinyl&type=release&per_page=100&page=${randomPage}&year=${fromYear}-${toYear}&sort=random`;
+        searchUrl = `https://api.discogs.com/database/search?q=${q}&format=Vinyl&type=release&per_page=100&page=${randomPage}`;
       } else {
         // Pick random style from genre
         const style = cfg.style[Math.floor(Math.random() * cfg.style.length)];
@@ -178,7 +178,7 @@ export default function SampleRoulette() {
           ? Math.floor(Math.random() * 35) + 5   // pages 5-40 = rarities
           : Math.floor(Math.random() * 4) + 1;   // pages 1-4 = known bangers
         setStatus(deepDig ? "◆ GOING DEEP..." : "◆ FINDING A BANGER...");
-        searchUrl = `https://api.discogs.com/database/search?style=${encodeURIComponent(style)}&genre=${encodeURIComponent(cfg.genre)}&format=Vinyl&type=release&per_page=100&page=${randomPage}&year=${fromYear}-${toYear}`;
+        searchUrl = `https://api.discogs.com/database/search?style=${encodeURIComponent(style)}&genre=${encodeURIComponent(cfg.genre)}&format=Vinyl&type=release&per_page=100&page=${randomPage}`;
       }
 
       const res = await fetch(searchUrl, {
@@ -266,10 +266,10 @@ export default function SampleRoulette() {
   return (
     <div style={{
       minHeight: "100vh",
-      background: "radial-gradient(ellipse at 50% 0%, #1c0a02 0%, #0a0808 45%, #000 100%)",
+      background: "radial-gradient(ellipse at 50% 0%, #1c0a02 0%, #0a0808 45%, #000 100%)", minWidth: "100vw",
       color: "#fff", fontFamily: "'Courier New', monospace",
-      display: "flex", flexDirection: "column", alignItems: "center",
-      padding: "22px 16px 50px", gap: 14, maxWidth: 520, margin: "0 auto",
+      display: "flex", flexDirection: "column", alignItems: "stretch",
+      padding: "30px 40px 60px", gap: 16, maxWidth: "100%",
     }}>
       <style>{`
         @keyframes fadeUp { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
@@ -281,6 +281,8 @@ export default function SampleRoulette() {
         input:focus{outline:none}
         button{font-family:'Courier New',monospace}
         ::-webkit-scrollbar{width:0}
+        html,body{margin:0;padding:0;background:#000;min-height:100vh}
+        #root{background:#000;min-height:100vh}
       `}</style>
 
       {/* ── HEADER ── */}
@@ -317,7 +319,7 @@ export default function SampleRoulette() {
       {/* ── GENRE GRID ── */}
       <div style={{ ...glass(), width:"100%", padding:6 }}>
         <div style={{ fontSize:8, color:"rgba(255,255,255,0.2)", letterSpacing:4, marginBottom:6, textAlign:"center", fontFamily:"Georgia,serif" }}>◆ SELECT GENRE ◆</div>
-        <div style={{ display:"grid", gridTemplateColumns:"repeat(4, 1fr)", gap:4 }}>
+        <div style={{ display:"grid", gridTemplateColumns:"repeat(6, 1fr)", gap:6 }}>
           {MODES.map(m => (
             <button key={m.key} onClick={() => switchMode(m.key)} className="tap" style={{
               padding:"7px 3px", fontSize:8, letterSpacing:0.5,
