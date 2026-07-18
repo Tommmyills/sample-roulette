@@ -137,6 +137,7 @@ export default function SampleRoulette() {
   const [ytVideo, setYtVideo]       = useState(null);
   const [ytLoading, setYtLoading]   = useState(false);
   const [status, setStatus]         = useState("");
+  const [copied, setCopied]           = useState(false);
 
   const mode = MODES.find(m => m.key === modeKey);
   const color = mode.color;
@@ -407,12 +408,46 @@ export default function SampleRoulette() {
 
           {/* Action buttons */}
           <div style={{ display:"flex", gap:8, flexWrap:"wrap" }}>
+
+            {/* YouTube */}
             <button className="tap" onClick={() => openYT(record)} style={{
               background:"linear-gradient(135deg, #bb0000, #ff2222)",
               color:"#fff", fontSize:9, letterSpacing:2, padding:"9px 16px",
               borderRadius:8, fontFamily:"Georgia,serif", fontWeight:700,
               boxShadow:"0 4px 14px rgba(200,0,0,0.3)",
             }}>▶ YOUTUBE</button>
+
+            {/* Copy YouTube URL */}
+            {ytVideo && (
+              <button className="tap" onClick={() => {
+                const url = `https://www.youtube.com/watch?v=${ytVideo.id}`;
+                navigator.clipboard.writeText(url).then(() => {
+                  setCopied(true);
+                  setTimeout(() => setCopied(false), 2000);
+                });
+              }} style={{
+                background: copied ? "linear-gradient(135deg, #00cc66, #00ff88)" : "rgba(255,255,255,0.07)",
+                border: copied ? "none" : "1px solid rgba(255,255,255,0.15)",
+                color: copied ? "#000" : "rgba(255,255,255,0.6)",
+                fontSize:9, letterSpacing:2, padding:"9px 14px",
+                borderRadius:8, fontFamily:"Georgia,serif", fontWeight:700,
+                transition:"all 0.2s",
+              }}>{copied ? "✓ COPIED!" : "⧉ COPY URL"}</button>
+            )}
+
+            {/* Cobalt download - opens cobalt.tools pre-filled */}
+            {ytVideo && (
+              <button className="tap" onClick={() => {
+                const ytUrl = encodeURIComponent(`https://www.youtube.com/watch?v=${ytVideo.id}`);
+                window.open(`https://cobalt.tools/#${ytUrl}`, "_blank");
+              }} style={{
+                background:"linear-gradient(135deg, #1a1a2e, #16213e)",
+                border:"1px solid rgba(100,100,255,0.3)",
+                color:"rgba(150,150,255,0.9)", fontSize:9, letterSpacing:2,
+                padding:"9px 14px", borderRadius:8, fontFamily:"Georgia,serif", fontWeight:700,
+                boxShadow:"0 4px 14px rgba(100,100,255,0.15)",
+              }}>⬇ COBALT MP3</button>
+            )}
 
             {ytApiKey && !ytVideo && !ytLoading && (
               <button className="tap" onClick={() => findYouTube(record, ytApiKey)} style={{
