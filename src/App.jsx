@@ -275,7 +275,7 @@ export default function SampleRoulette() {
       <div style={{ position:"fixed", inset:0, pointerEvents:"none", zIndex:0 }}>
         <img src="/splatter.png" alt="" style={{
           width:"100%", height:"100%", objectFit:"cover",
-          opacity:0.5, mixBlendMode:"normal",
+          opacity:0.9, mixBlendMode:"lighten",
         }}/>
         <BloodDrips />
       </div>
