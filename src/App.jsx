@@ -277,7 +277,6 @@ export default function SampleRoulette() {
           width:"100%", height:"100%", objectFit:"cover",
           opacity:0.9, mixBlendMode:"lighten",
         }}/>
-        <BloodDrips />
       </div>
 
       <div style={{ position:"relative", zIndex:1, maxWidth:960, margin:"0 auto", padding:"28px 36px 60px", display:"flex", flexDirection:"column", gap:20 }}>
