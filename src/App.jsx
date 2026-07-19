@@ -275,7 +275,7 @@ export default function SampleRoulette() {
       <div style={{ position:"fixed", inset:0, pointerEvents:"none", zIndex:0 }}>
         <img src="/splatter.png" alt="" style={{
           width:"100%", height:"100%", objectFit:"cover",
-          opacity:0.9, mixBlendMode:"lighten",
+          opacity:1, mixBlendMode:"screen",
         }}/>
       </div>
 
@@ -312,7 +312,7 @@ export default function SampleRoulette() {
                     <button key={m.key} onClick={()=>switchMode(m.key)}
                       onMouseDown={()=>setP(true)} onMouseUp={()=>setP(false)} onMouseLeave={()=>setP(false)}
                       style={{
-                        padding:"7px 3px", fontSize:8, letterSpacing:0.5,
+                        padding:"10px 6px", fontSize:10, letterSpacing:1,
                         fontFamily:"'CaptureIt','Courier New',monospace", fontWeight:700, cursor:"pointer",
                         border:`1px solid ${modeKey===m.key||p?"#cc0000":"rgba(255,255,255,0.06)"}`,
                         borderRadius:6,
@@ -322,7 +322,7 @@ export default function SampleRoulette() {
                         transition:"all 0.12s", lineHeight:1.4,
                       }}>
                       {m.label}
-                      <div style={{ fontSize:6, opacity:0.5, marginTop:1 }}>{m.sub}</div>
+                      <div style={{ fontSize:7, opacity:0.6, marginTop:2 }}>{m.sub}</div>
                     </button>
                   );
                 })}
@@ -415,7 +415,7 @@ export default function SampleRoulette() {
         {/* YOUTUBE API KEY */}
         <div style={{ ...glass, border:ytApiKey?"1px solid rgba(204,0,0,0.25)":"1px solid rgba(255,255,255,0.06)", padding:"14px 16px" }}>
           <div style={{ fontSize:8, color:ytApiKey?"#cc0000":"rgba(255,255,255,0.18)", letterSpacing:4, marginBottom:7 }}>
-            {ytApiKey?"✓ YOUTUBE API ACTIVE — AUTO VIDEO SEARCH ON":"⚙ PASTE YOUTUBE API KEY TO ENABLE AUTO VIDEO SEARCH"}
+            {ytApiKey?"✓ YOUTUBE API KEY SAVED & ACTIVE":"⚙ PASTE YOUR YOUTUBE API KEY BELOW"}
           </div>
           <div style={{ display:"flex", gap:8 }}>
             <input type="password" value={ytApiKey} onChange={e=>{setYtApiKey(e.target.value);setError("");}}
