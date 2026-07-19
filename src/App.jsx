@@ -242,12 +242,66 @@ export default function SampleRoulette() {
     if (!key) { setError("PASTE YOUR YOUTUBE API KEY BELOW"); return; }
     setYtLoading(true); setYtVideo(null);
     try {
-      const q = encodeURIComponent(`${rec.artist} ${rec.title}`);
-      const res = await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&q=${q}&type=video&order=viewCount&maxResults=1&key=${key}`);
-      const data = await res.json();
-      if (data.error) { setError(`YOUTUBE: ${data.error.message}`); setYtLoading(false); return; }
-      const item = data.items?.[0];
-      if (item) setYtVideo({ id:item.id.videoId, title:item.snippet.title, channel:item.snippet.channelTitle });
+      // Build smart search queries from all Discogs data
+      const queries = [
+        // Most specific first
+        `${rec.artist} ${rec.title} ${rec.year}`,
+        // With label
+        `${rec.artist} ${rec.title} ${rec.label}`,
+        // Broader
+        `${rec.artist} ${rec.title}`,
+        // Just title if artist is weird
+        `${rec.title} ${rec.year} ${rec.style}`,
+      ].filter(q => q.trim().length > 3);
+
+      let bestVideo = null;
+      let bestViews = 0;
+
+      for (const q of queries) {
+        try {
+          const res = await fetch(
+            `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(q)}&type=video&order=viewCount&maxResults=3&key=${key}`
+          );
+          const data = await res.json();
+          if (data.error) { setError(`YOUTUBE: ${data.error.message}`); setYtLoading(false); return; }
+          
+          const items = data.items || [];
+          if (items.length > 0) {
+            // Get view counts for top results
+            const ids = items.map(i => i.id.videoId).join(",");
+            const statsRes = await fetch(
+              `https://www.googleapis.com/youtube/v3/videos?part=statistics,snippet&id=${ids}&key=${key}`
+            );
+            const statsData = await statsRes.json();
+            
+            for (const vid of statsData.items || []) {
+              const views = parseInt(vid.statistics?.viewCount || 0);
+              if (views > bestViews) {
+                bestViews = views;
+                bestVideo = {
+                  id: vid.id,
+                  title: vid.snippet.title,
+                  channel: vid.snippet.channelTitle,
+                  views: views,
+                  viewsFormatted: views > 1000000 
+                    ? `${(views/1000000).toFixed(1)}M views`
+                    : views > 1000 
+                    ? `${(views/1000).toFixed(0)}K views`
+                    : `${views} views`,
+                };
+              }
+            }
+            // If we found something with decent views, stop searching
+            if (bestViews > 10000) break;
+          }
+        } catch(e) { continue; }
+      }
+
+      if (bestVideo) {
+        setYtVideo(bestVideo);
+      } else {
+        setError("NOT FOUND ON YOUTUBE — USE MANUAL SEARCH");
+      }
     } catch(e) { setError("YOUTUBE SEARCH FAILED"); }
     setYtLoading(false);
   };
@@ -385,12 +439,16 @@ export default function SampleRoulette() {
               <div style={{ background:"rgba(204,0,0,0.06)", border:"1px solid rgba(204,0,0,0.18)", borderRadius:8, padding:"8px 12px", marginBottom:14 }}>
                 <div style={{ fontSize:8, color:"rgba(204,0,0,0.65)", letterSpacing:2, marginBottom:2 }}>▶ MOST VIEWED ON YOUTUBE</div>
                 <div style={{ fontSize:10, color:"rgba(255,255,255,0.55)", lineHeight:1.4 }}>{ytVideo.title.length>65?ytVideo.title.slice(0,64)+"…":ytVideo.title}</div>
-                <div style={{ fontSize:8, color:"rgba(255,255,255,0.22)", marginTop:2 }}>{ytVideo.channel}</div>
+                <div style={{ fontSize:8, color:"rgba(255,255,255,0.22)", marginTop:2 }}>{ytVideo.channel} · {ytVideo.viewsFormatted}</div>
               </div>
             )}
 
             <div style={{ display:"flex", gap:8, flexWrap:"wrap" }}>
               <Btn primary onClick={openYT} style={{ boxShadow:"0 4px 14px rgba(200,0,0,0.3)" }}>▶ YOUTUBE</Btn>
+
+              {/* Manual search fallback - always visible */}
+              <Btn onClick={() => window.open(`https://www.youtube.com/results?search_query=${encodeURIComponent(record.artist+" "+record.title+" "+record.year)}`, "_blank")}
+                style={{ fontSize:9 }}>🔍 SEARCH YT</Btn>
 
               {ytVideo && (
                 <Btn onClick={()=>{ navigator.clipboard.writeText(`https://www.youtube.com/watch?v=${ytVideo.id}`).then(()=>{ setCopied(true); setTimeout(()=>setCopied(false),2000); }); }}
