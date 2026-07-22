@@ -18,7 +18,7 @@
     --sub:#a88a8a;
     --amber:#ff4433;
     --brass:#7a0f1f;
-    --pad1:#d4103a; --pad2:#ff1f3d; --pad3:#ff4433; --pad4:#ff5566; --pad5:#8a1428; --pad6:#ff7043;
+    --pad1:#d4103a; --pad2:#ff1f3d; --pad3:#ff4433; --pad4:#ff5566; --pad5:#8a1428; --pad6:#ff7043; --pad7:#ff2952; --pad8:#c92c48;
   }
   *{box-sizing:border-box;}
   html{ background:var(--bg); }
@@ -177,17 +177,19 @@
   .autobtn-listening{ color:var(--amber); border-color:var(--amber); box-shadow:0 0 14px var(--amber); animation:pulse 1s infinite; }
 
   /* pads */
-  .padgrid{ display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:14px; }
+  .padgrid{ display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-bottom:14px; }
   .pad{ aspect-ratio:1.6; border-radius:3px; border:1.5px solid transparent; cursor:pointer; font-family:'JetBrains Mono',monospace;
     font-size:11px; font-weight:700; color:#0a0a0a; opacity:.5; display:flex; align-items:center; justify-content:center;
     background:rgba(255,255,255,0.08); transition:box-shadow .15s, opacity .15s, background .15s; }
   .pad1{ border-color:var(--pad1); color:var(--pad1); } .pad2{ border-color:var(--pad2); color:var(--pad2); }
   .pad3{ border-color:var(--pad3); color:var(--pad3); } .pad4{ border-color:var(--pad4); color:var(--pad4); }
   .pad5{ border-color:var(--pad5); color:var(--pad5); } .pad6{ border-color:var(--pad6); color:var(--pad6); }
+  .pad7{ border-color:var(--pad7); color:var(--pad7); } .pad8{ border-color:var(--pad8); color:var(--pad8); }
   .pad:hover{ opacity:.85; box-shadow:0 0 12px -2px currentColor; }
   .pad.set{ opacity:1; color:#0a0a0a; box-shadow:0 0 16px -1px currentColor, inset 0 0 10px rgba(255,255,255,0.25); }
   .pad1.set{ background:var(--pad1); } .pad2.set{ background:var(--pad2); } .pad3.set{ background:var(--pad3); }
   .pad4.set{ background:var(--pad4); } .pad5.set{ background:var(--pad5); } .pad6.set{ background:var(--pad6); }
+  .pad7.set{ background:var(--pad7); } .pad8.set{ background:var(--pad8); }
 
   .slidergroup{ margin-bottom:8px; }
   .slidergroup label{ display:flex; justify-content:space-between; font-size:10px; color:var(--sub);
@@ -449,7 +451,7 @@
 </div>
 
 <footer>
-  <b>Pads = hot cues, not samples:</b> tap an empty pad to store the current timestamp, tap it again to jump there and play. Double-click a pad to clear it.<br>
+  <b>Pads = hot cues, not samples:</b> tap an empty pad to store the current timestamp, tap it again to jump there and play. Press and hold a pad (~half a second) to clear it — this replaced double-click/double-tap, which could accidentally wipe a cue right after you set it.<br>
   <b>Loops:</b> IN/OUT set manual loop points; the quick buttons grab a fixed length from wherever the playhead is. Looping re-seeks on each pass, so it's solid but not frame-perfect like real hardware.<br>
   <b>MIDI:</b> click Connect, then click any "MIDI:" button and touch the matching control on your REV-1 — it binds automatically. Pads bind to note-on, faders/knobs to CC.<br>
   <b>BPM:</b> TAP is the reliable method — click in rhythm with the beat, it averages your last few taps. AUTO is experimental: it asks to capture your tab's actual audio (checkbox "share tab audio" in the picker) and estimates BPM from real energy peaks over 8 seconds — accuracy varies by track, and it may be blocked entirely inside this sandboxed preview (works better if you download the file and open it directly in Chrome). Each deck has its own SYNC button — press it to retune that deck's speed to match the other deck's stored BPM (nothing syncs automatically).<br>
@@ -509,7 +511,7 @@ function loadDeck(deck){
   nowEl.textContent = "Loading…";
   document.getElementById('playBtn'+deck).textContent = '▶ PLAY';
   document.getElementById('jog'+deck).classList.remove('spin');
-  padStore[deck] = [null,null,null,null,null,null];
+  padStore[deck] = [null,null,null,null,null,null,null,null];
   renderPads(deck);
   loopActive[deck] = false;
   document.getElementById('loopToggle'+deck).classList.remove('on');
@@ -717,18 +719,35 @@ function updateLoopReadout(deck){
 }
 
 // ---------- pads (hot cues) ----------
-let padStore = { A:[null,null,null,null,null,null], B:[null,null,null,null,null,null] };
+let padStore = { A:[null,null,null,null,null,null,null,null], B:[null,null,null,null,null,null,null,null] };
 function renderPads(deck){
   const el = document.getElementById('pads'+deck);
   el.innerHTML = '';
-  for(let i=0;i<6;i++){
+  for(let i=0;i<8;i++){
     const b = document.createElement('button');
     b.className = 'pad pad'+(i+1) + (padStore[deck][i] != null ? ' set' : '');
     b.textContent = padStore[deck][i] != null ? formatTime(padStore[deck][i]) : (i+1);
     b.dataset.learn = 'pad'+deck+i;
-    b.onclick = () => hitPad(deck, i);
+
+    // Long-press (hold ~500ms) clears the pad. A quick tap/click always hits it.
+    // This replaces double-click-to-clear, which a normal double-tap on touch
+    // devices could trigger by accident right after setting a cue.
+    let pressTimer = null, longPressed = false;
+    const startPress = (e) => {
+      longPressed = false;
+      pressTimer = setTimeout(() => {
+        longPressed = true;
+        padStore[deck][i] = null;
+        renderPads(deck);
+      }, 500);
+    };
+    const cancelPress = () => { clearTimeout(pressTimer); };
+    b.addEventListener('pointerdown', startPress);
+    b.addEventListener('pointerup', cancelPress);
+    b.addEventListener('pointerleave', cancelPress);
+    b.addEventListener('pointercancel', cancelPress);
+    b.onclick = () => { if(longPressed){ longPressed = false; return; } hitPad(deck, i); };
     b.oncontextmenu = (e) => { e.preventDefault(); padStore[deck][i] = null; renderPads(deck); };
-    b.ondblclick = () => { padStore[deck][i] = null; renderPads(deck); };
     el.appendChild(b);
   }
 }
